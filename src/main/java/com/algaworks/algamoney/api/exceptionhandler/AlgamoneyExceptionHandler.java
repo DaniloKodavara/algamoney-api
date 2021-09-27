@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +42,9 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
     }
 
-    private List<Erro> criarListaDeErros(BindingResult bindingResult){
+    private List<Erro> criarListaDeErros(BindingResult bindingResult) {
         List<Erro> erros = new ArrayList<>();
-        bindingResult.getFieldErrors().forEach( fieldError -> {
+        bindingResult.getFieldErrors().forEach(fieldError -> {
             String mensagemUsuario = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
             String mensagemDesenvolvedor = fieldError.toString();
 
