@@ -1,11 +1,16 @@
 package com.algaworks.algamoney.api.resource;
 
+import com.algaworks.algamoney.api.event.RecursoCriadoEvent;
 import com.algaworks.algamoney.api.model.Categoria;
 import com.algaworks.algamoney.api.repository.CategoriaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -15,6 +20,9 @@ import java.util.List;
 public class CategoriaResource {
 
     private final CategoriaRepository repository;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     public CategoriaResource(CategoriaRepository repository) {
         this.repository = repository;
@@ -26,13 +34,11 @@ public class CategoriaResource {
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Categoria criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
         Categoria categoriaSalva = this.repository.save(categoria);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path("/{codigo}").buildAndExpand(categoriaSalva.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(categoriaSalva);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaSalva.getId()));
+        return categoriaSalva;
     }
 
     @GetMapping("/{codigo}")
