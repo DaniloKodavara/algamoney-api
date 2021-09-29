@@ -47,7 +47,7 @@ public class PessoaResource {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long id) {
+    public ResponseEntity<Pessoa> buscarPeloid(@PathVariable Long id) {
         Optional<Pessoa> pessoa = repository.findById(id);
         return pessoa.isPresent() ? ResponseEntity.ok(pessoa.get()) : ResponseEntity.notFound().build();
     }

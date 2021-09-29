@@ -8,11 +8,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -42,13 +40,13 @@ public class CategoriaResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> buscarPeloCodigo(@PathVariable Long id) {
+    public ResponseEntity<Categoria> buscarPeloid(@PathVariable Long id) {
         return this.repository.findById(id).map(categoria -> ResponseEntity.ok(categoria)).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id){
+    public void remover(@PathVariable Long id) {
         repository.deleteById(id);
     }
 
