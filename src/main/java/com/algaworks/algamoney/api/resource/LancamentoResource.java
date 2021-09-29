@@ -2,13 +2,12 @@ package com.algaworks.algamoney.api.resource;
 
 import com.algaworks.algamoney.api.exceptionhandler.AlgamoneyExceptionHandler;
 import com.algaworks.algamoney.api.model.Lancamento;
+import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.service.LancamentoService;
 import com.algaworks.algamoney.api.service.exception.PessoaInativaException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,8 @@ public class LancamentoResource {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Lancamento> listarLancamentos() {
-        return service.listarLancamentos();
+    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
+        return service.pesquisarLancamentoPorFiltro(lancamentoFilter);
     }
 
     @GetMapping("/{id}")
@@ -46,7 +45,7 @@ public class LancamentoResource {
     }
 
     @ExceptionHandler(PessoaInativaException.class)
-    public ResponseEntity<Object> handlePessoaInativaException(PessoaInativaException ex){
+    public ResponseEntity<Object> handlePessoaInativaException(PessoaInativaException ex) {
         String mensagemUsuario = messageSource.getMessage("pessoa.inativa", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ex.toString();
         List<AlgamoneyExceptionHandler.Erro> erros = Arrays.asList(new AlgamoneyExceptionHandler.Erro(mensagemUsuario, mensagemDesenvolvedor));

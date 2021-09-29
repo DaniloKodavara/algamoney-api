@@ -4,6 +4,7 @@ import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.LancamentoRepository;
 import com.algaworks.algamoney.api.repository.PessoaRepository;
+import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.service.exception.PessoaInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -37,4 +38,7 @@ public class LancamentoService {
     }
 
 
+    public List<Lancamento> pesquisarLancamentoPorFiltro(LancamentoFilter lancamentoFilter) {
+        return repository.filtrar(lancamentoFilter);
+    }
 }
