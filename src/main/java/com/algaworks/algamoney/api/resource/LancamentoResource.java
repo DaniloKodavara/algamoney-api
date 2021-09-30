@@ -8,6 +8,8 @@ import com.algaworks.algamoney.api.service.exception.PessoaInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +30,8 @@ public class LancamentoResource {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
-        return service.pesquisarLancamentoPorFiltro(lancamentoFilter);
+    public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        return service.filtrar(lancamentoFilter, pageable);
     }
 
     @GetMapping("/{id}")
@@ -44,6 +46,12 @@ public class LancamentoResource {
         return service.salvarLancamento(lancamento);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long id){
+        service.removerLancamento(id);
+    }
+
     @ExceptionHandler(PessoaInativaException.class)
     public ResponseEntity<Object> handlePessoaInativaException(PessoaInativaException ex) {
         String mensagemUsuario = messageSource.getMessage("pessoa.inativa", null, LocaleContextHolder.getLocale());
@@ -51,5 +59,6 @@ public class LancamentoResource {
         List<AlgamoneyExceptionHandler.Erro> erros = Arrays.asList(new AlgamoneyExceptionHandler.Erro(mensagemUsuario, mensagemDesenvolvedor));
         return ResponseEntity.badRequest().body(erros);
     }
+
 
 }

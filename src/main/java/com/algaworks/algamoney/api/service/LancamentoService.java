@@ -8,6 +8,8 @@ import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.service.exception.PessoaInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +40,11 @@ public class LancamentoService {
     }
 
 
-    public List<Lancamento> pesquisarLancamentoPorFiltro(LancamentoFilter lancamentoFilter) {
-        return repository.filtrar(lancamentoFilter);
+    public Page<Lancamento> filtrar(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        return repository.filtrar(lancamentoFilter, pageable);
+    }
+
+    public void removerLancamento(Long id) {
+        repository.deleteById(id);
     }
 }
