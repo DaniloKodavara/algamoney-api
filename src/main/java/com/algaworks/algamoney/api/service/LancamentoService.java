@@ -3,10 +3,10 @@ package com.algaworks.algamoney.api.service;
 import com.algaworks.algamoney.api.model.Lancamento;
 import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.LancamentoRepository;
-import com.algaworks.algamoney.api.repository.PessoaRepository;
 import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.repository.projection.ResumoLancamento;
 import com.algaworks.algamoney.api.service.exception.PessoaInativaException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,7 @@ public class LancamentoService {
     @Autowired
     PessoaService pessoaService;
 
-    public Lancamento buscarLancamentoPorId(Long id){
+    public Lancamento buscarLancamentoPorId(Long id) {
         return repository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
@@ -35,7 +35,7 @@ public class LancamentoService {
 
     public Lancamento salvarLancamento(Lancamento lancamento) {
         Pessoa pessoa = pessoaService.buscarPessoaPeloId(lancamento.getPessoa().getId());
-        if(pessoa.isInativo())
+        if (pessoa.isInativo())
             throw new PessoaInativaException();
         return repository.save(lancamento);
     }
@@ -51,5 +51,25 @@ public class LancamentoService {
 
     public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
         return repository.resumir(lancamentoFilter, pageable);
+    }
+
+    public Lancamento atualizar(Long id, Lancamento lancamento) {
+        Lancamento lancamentoSalvo = buscarLancamentoPorId(id);
+        if (!lancamentoSalvo.getPessoa().equals(lancamentoSalvo.getPessoa())) {
+            validarPessoa(lancamento);
+        }
+
+        BeanUtils.copyProperties(lancamento, lancamentoSalvo, "id");
+
+        return repository.save(lancamentoSalvo);
+    }
+
+    private void validarPessoa(Lancamento lancamento) {
+        Pessoa pessoa = null;
+        if (lancamento.getPessoa().getId() != null)
+            pessoa = pessoaService.buscarPessoaPeloId(lancamento.getPessoa().getId());
+        if (pessoa.isInativo()) {
+            throw new PessoaInativaException();
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.algaworks.algamoney.api.resource;
 
 import com.algaworks.algamoney.api.exceptionhandler.AlgamoneyExceptionHandler;
 import com.algaworks.algamoney.api.model.Lancamento;
+import com.algaworks.algamoney.api.model.Pessoa;
 import com.algaworks.algamoney.api.repository.filter.LancamentoFilter;
 import com.algaworks.algamoney.api.repository.projection.ResumoLancamento;
 import com.algaworks.algamoney.api.service.LancamentoService;
@@ -73,5 +74,11 @@ public class LancamentoResource {
         return ResponseEntity.badRequest().body(erros);
     }
 
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and hasAuthority('SCOPE_write')")
+    public Lancamento atualizar(@PathVariable Long id, @Valid @RequestBody Lancamento lancamento){
+        return service.atualizar(id, lancamento);
+    }
 
 }
